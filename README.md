@@ -60,28 +60,15 @@ http-server -p 8000
 
 ## 部署到Cloudflare Pages | Deploy to Cloudflare Pages
 
-### 🚀 一键部署 | One-Click Deploy
-
-[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/liuhangbin/cube)
-
-点击上方按钮即可快速部署到 Cloudflare Pages！
-
 ### 方法1：GitHub集成部署 (推荐)
 
-1. **准备代码**
-   ```bash
-   git add .
-   git commit -m "Add rubik's cube solution learning platform"
-   git push origin main
-   ```
-
-2. **创建Pages项目**
+1. **创建Pages项目**
    - 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)
    - 转到 "Pages" 页面
    - 点击 "Create a project"
    - 选择 "Connect to Git"
 
-3. **连接GitHub仓库**
+2. **连接GitHub仓库**
    - 选择你的GitHub仓库
    - 设置构建配置：
      - **Framework preset**: None (Static HTML)
@@ -99,28 +86,6 @@ http-server -p 8000
    - 在 Cloudflare Pages 中选择 "Upload assets"
    - 拖拽整个项目文件夹或上传 ZIP 文件
    - 自动部署完成
-
-### 方法3：使用Wrangler CLI
-
-1. **安装Wrangler**
-   ```bash
-   npm install -g wrangler
-   ```
-
-2. **登录并部署**
-   ```bash
-   wrangler auth login
-   wrangler pages deploy . --project-name rubiks-cube-solution-learning
-   ```
-
-## 使用方法 | How to Use
-
-1. **选择解法类型**: 在左侧选择框中使用下拉菜单选择F2L、OLL或PLL
-2. **浏览解法列表**: 选择类型后，同一选择框内会展开显示该类型的所有解法
-3. **选择具体解法**: 点击解法项目（包含缩略图、名称和步骤预览）
-4. **观看视频**: 右侧会自动加载对应的教学视频
-5. **学习步骤**: 下方显示解法的详细步骤
-6. **键盘导航**: 使用↑↓方向键在解法列表中快速切换
 
 ## 解法数据 | Solution Data
 
