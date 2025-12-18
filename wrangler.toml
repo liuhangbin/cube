@@ -1,0 +1,11 @@
+# Cloudflare Pages configuration for Rubik's Cube Solution Learning Platform
+name = "rubiks-cube"
+compatibility_date = "2024-03-18"
+
+# Pages configuration for static site hosting
+[env.production]
+pages_build_output_dir = "."
+
+# Optional: Custom domain configuration (uncomment and modify if needed)
+# [env.production]
+# custom_domain = "your-domain.com"

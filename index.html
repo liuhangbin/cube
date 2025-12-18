@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔方解法教学视频 - Rubik's Cube Solution Videos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>魔方解法教学视频</h1>
+            <p>Rubik's Cube Solution Video Platform</p>
+        </header>
+
+        <!-- Main content area -->
+        <div class="main-content">
+            <!-- Left sidebar with dropdown selection -->
+            <aside class="sidebar">
+                <div class="algorithm-selector">
+                    <!-- Solution Selection Container -->
+                    <div class="dropdown-container">
+                        <label for="algorithm-type-select" class="dropdown-label">解法类型 | Solution Type</label>
+                        <select id="algorithm-type-select" class="dropdown-select">
+                            <option value="">选择解法类型 | Select Solution Type</option>
+                            <option value="f2l">F2L (First Two Layers)</option>
+                            <option value="oll">OLL (Orientation of Last Layer)</option>
+                            <option value="pll">PLL (Permutation of Last Layer)</option>
+                        </select>
+
+                        <!-- Solution List Display -->
+                        <div class="algorithm-list" id="algorithm-list" style="display: none;">
+                            <!-- Solution items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right content area with video and algorithm display -->
+            <main class="content">
+                <div class="video-container">
+                    <div class="video-placeholder" id="video-area">
+                        <p>使用左侧下拉菜单选择解法查看教学视频</p>
+                        <p>Use the dropdown menus on the left to select a solution and watch the tutorial video</p>
+                    </div>
+                </div>
+
+                <div class="algorithm-info">
+                    <h3 id="algorithm-title">选择解法</h3>
+                    <div class="algorithm-steps" id="algorithm-steps">
+                        <p>使用左侧下拉菜单选择解法查看详细步骤</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+    // 完整解法数据（内联避免fetch问题）
+    const ALGORITHMS_DATA = {
+        "f2l": [
+            {"number": 1, "step": "(R U' U' R' U)2 y'(R' U' R)", "link": "BV1iDqgBUEPr", "imagePath": "images/image_F2L_001.bmp", "difficulty": "easy", "tags": ["f2l", "rotation", "right"]},
+            {"number": 2, "step": "(U R U' R' U') y'(R' U R)", "link": "BV1f2qgBHEcn", "imagePath": "images/image_F2L_002.bmp", "difficulty": "easy", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 3, "step": "y U'(L' U L U)y' (R U' R')", "link": "BV1ByqgBXER6", "imagePath": "images/image_F2L_003.bmp", "difficulty": "easy", "tags": ["f2l", "rotation", "up"]},
+            {"number": 4, "step": "(R U R' U')(R U'U' R' U')(R U R')", "link": "BV1ByqgBXEDD", "imagePath": "images/image_F2L_004.bmp", "difficulty": "easy", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 5, "step": "(R U' R U)y(R U' R' F2)", "link": "BV1fyqgBXENU", "imagePath": "images/image_F2L_005.bmp", "difficulty": "easy", "tags": ["f2l", "rotation", "right", "front"]},
+            {"number": 6, "step": "y'(R' U' R U)(R' U' R)", "link": "BV1ByqgBXEzz", "imagePath": "images/image_F2L_006.bmp", "difficulty": "easy", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 7, "step": "(R U' R' U)(R U' R')", "link": "BV1zyqgBXEwj", "imagePath": "images/image_F2L_007.bmp", "difficulty": "easy", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 8, "step": "(R U'U')(R U R' U)(R U'U')R2", "link": "BV1zyqgB9EsG", "imagePath": "images/image_F2L_008.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 9, "step": "R2 y(R U R' U')y'(R' U R')", "link": "BV1zyqgBXEcK", "imagePath": "images/image_F2L_009.bmp", "difficulty": "medium", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 10, "step": "y' (R' U)(R U')(R' U R)", "link": "BV1zyqgBXELu", "imagePath": "images/image_F2L_010.bmp", "difficulty": "easy", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 11, "step": "(R U R' U' )(R U R')", "link": "BV1RGqgByEEE", "imagePath": "images/image_F2L_011.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 12, "step": "(R U R' U')2 (R U R')", "link": "BV1RGqgByEEN", "imagePath": "images/image_F2L_012.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 13, "step": "(R U' R') y' (R' U2 R)", "link": "BV19GqgByEkp", "imagePath": "images/image_F2L_013.bmp", "difficulty": "medium", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 14, "step": "y'(R' U2)(R U R' U')R", "link": "BV1RGqgByE7V", "imagePath": "images/image_F2L_014.bmp", "difficulty": "medium", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 15, "step": "d' z U'(R2 U)(R' U' R U)", "link": "BV1RGqgByEHY", "imagePath": "images/image_F2L_015.bmp", "difficulty": "hard", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 16, "step": "F' L' U2 r U x'", "link": "BV15GqgB1Eq6", "imagePath": "images/image_F2L_016.bmp", "difficulty": "hard", "tags": ["f2l", "front", "up", "counterclockwise"]},
+            {"number": 17, "step": "y' (U2 R2' U2)(R U R' U R2)", "link": "BV15GqgB1Ei3", "imagePath": "images/image_F2L_017.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 18, "step": "(U2 R2' U2)(R' U' R U' R2)", "link": "BV19GqgByE9C", "imagePath": "images/image_F2L_018.bmp", "difficulty": "hard", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 19, "step": "R y (R U2 R' F')", "link": "BV1RGqgByETv", "imagePath": "images/image_F2L_019.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "front"]},
+            {"number": 20, "step": "U(R U'U')(R' U R U' )R'", "link": "BV15GqgB1ETe", "imagePath": "images/image_F2L_020.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 21, "step": "(R U'U')(R' U' R U)R'", "link": "BV15GqgB1EU9", "imagePath": "images/image_F2L_021.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 22, "step": "U' (R U')(R' U2)(R U' R')", "link": "BV15GqgB1EyL", "imagePath": "images/image_F2L_022.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 23, "step": "U' (R U R') d (R' U' R)", "link": "BV1R3qgBLEXN", "imagePath": "images/image_F2L_023.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 24, "step": "d (R' U R U')(R' U' R)", "link": "BV1R3qgBLEU7", "imagePath": "images/image_F2L_024.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 25, "step": "y' (R' U' R)", "link": "BV1R3qgBLE8x", "imagePath": "images/image_F2L_025.bmp", "difficulty": "easy", "tags": ["f2l", "rotation", "right", "counterclockwise"]},
+            {"number": 26, "step": "(R2 U)y(R U' R' F2)", "link": "BV1R3qgBLEkT", "imagePath": "images/image_F2L_026.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "front"]},
+            {"number": 27, "step": "y' (R U'U')R'2 U' R2 U' R'", "link": "BV1d3qgBLENS", "imagePath": "images/image_F2L_027.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 28, "step": "y' (R' U)(R d' U')(R U R')", "link": "BV1R3qgBLEke", "imagePath": "images/image_F2L_028.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 29, "step": "U' (R U'U')(R' U2)(R U' R')", "link": "BV153qgBjEdS", "imagePath": "images/image_F2L_029.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 30, "step": "y' R2 y'(R' U' R U)Y R2", "link": "BV1R3qgBLE27", "imagePath": "images/image_F2L_030.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 31, "step": "U R U' R'", "link": "BV1R3qgBLEtM", "imagePath": "images/image_F2L_031.bmp", "difficulty": "easy", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 32, "step": "U' (R U'U' R' U)(R U R')", "link": "BV1R3qgBLEzf", "imagePath": "images/image_F2L_032.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 33, "step": "d (R' U' R) d' (R U R')", "link": "BV1R3qgBLEHT", "imagePath": "images/image_F2L_033.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 34, "step": "x(U R' U' l)", "link": "BV1R3qgBLESs", "imagePath": "images/image_F2L_034.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 35, "step": "R2 y (R U R' U')y' R2", "link": "BV1XLqgBkELS", "imagePath": "images/image_F2L_035.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "up"]},
+            {"number": 36, "step": "d (R' U2)(R U'U')(R' U R)", "link": "BV1VLqgBCETB", "imagePath": "images/image_F2L_036.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 37, "step": "(R U' R' U)(d R' U' R)", "link": "BV1XLqgBkECy", "imagePath": "images/image_F2L_037.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 38, "step": "(R' U2)(R2' U)(R2' U R)", "link": "BV1XLqgBkECb", "imagePath": "images/image_F2L_038.bmp", "difficulty": "hard", "tags": ["f2l", "right", "up", "counterclockwise"]},
+            {"number": 39, "step": "y' (R2 U')(F' U F)R2", "link": "BV1XLqgBkEER", "imagePath": "images/image_F2L_039.bmp", "difficulty": "hard", "tags": ["f2l", "rotation", "right", "front"]},
+            {"number": 40, "step": "(R U R')", "link": "BV1VLqgBCEwC", "imagePath": "images/image_F2L_040.bmp", "difficulty": "easy", "tags": ["f2l", "right", "up"]},
+            {"number": 41, "step": "U' (R U' R' U)(R U R')", "link": "BV1XLqgBkE5D", "imagePath": "images/image_F2L_041.bmp", "difficulty": "medium", "tags": ["f2l", "right", "up", "counterclockwise"]}
+        ],
+        "oll": [
+            {"number": 1, "step": "(R U'U') (R2' F R F') U2 (R' F R F')", "link": "BV195qgBVEG4", "imagePath": "images/image_OLL_001.bmp", "difficulty": "medium", "tags": ["oll", "right", "front", "up"]},
+            {"number": 2, "step": "(F R U R' U' F') (f R U R' U' f')", "link": "BV195qgBVEVG", "imagePath": "images/image_OLL_002.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 3, "step": "f(R U R' U')f' U' F(R U R' U')F'", "link": "BV195qgBVEse", "imagePath": "images/image_OLL_003.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 4, "step": "f(R U R' U')y x(R' F)(R U R' U')F'", "link": "BV195qgBVEAV", "imagePath": "images/image_OLL_004.bmp", "difficulty": "hard", "tags": ["oll", "rotation", "front", "right"]},
+            {"number": 5, "step": "(r' U2) (R U R'U) r", "link": "BV195qgBVEeR", "imagePath": "images/image_OLL_005.bmp", "difficulty": "medium", "tags": ["oll", "right", "up"]},
+            {"number": 6, "step": "(r U'U') (R' U' R U' r')", "link": "BV195qgBVE56", "imagePath": "images/image_OLL_006.bmp", "difficulty": "medium", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 7, "step": "r U R' U R U'U' r'", "link": "BV195qgBVELb", "imagePath": "images/image_OLL_007.bmp", "difficulty": "easy", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 8, "step": "r' U' R U' R' U2 r", "link": "BV195qgBVEJk", "imagePath": "images/image_OLL_008.bmp", "difficulty": "easy", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 9, "step": "(R' U' R) y' x' (R U')(R'F) (R U R')", "link": "BV195qgBVEFz", "imagePath": "images/image_OLL_009.bmp", "difficulty": "hard", "tags": ["oll", "rotation", "right", "front"]},
+            {"number": 10, "step": "(R U R'U)(R'F R F') (RU'U'R')", "link": "BV195qgBVEaj", "imagePath": "images/image_OLL_010.bmp", "difficulty": "medium", "tags": ["oll", "right", "front", "up"]},
+            {"number": 11, "step": "r'(R2 U R' U)(R U'U' R' U) (r R')", "link": "BV195qgBVEuR", "imagePath": "images/image_OLL_011.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 12, "step": "L2 l U' z (U R'U') (R2 U R') z' r R'", "link": "BV1T4qgBKE9i", "imagePath": "images/image_OLL_012.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 13, "step": "(r U' r' U')(r U r') (F' U F)", "link": "BV1QEqgB6E7A", "imagePath": "images/image_OLL_013.bmp", "difficulty": "medium", "tags": ["oll", "right", "front", "up"]},
+            {"number": 14, "step": "R' F R U R' F'R (F U' F')", "link": "BV1QEqgB6EMC", "imagePath": "images/image_OLL_014.bmp", "difficulty": "medium", "tags": ["oll", "right", "front", "up"]},
+            {"number": 15, "step": "(r' U' r) (R'U'R U) (r' U r)", "link": "BV1QEqgB6Ehi", "imagePath": "images/image_OLL_015.bmp", "difficulty": "medium", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 16, "step": "R B R' L U L' U' R B' R'", "link": "BV1QEqgB6E8g", "imagePath": "images/image_OLL_016.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 17, "step": "(R U R' U) (R' F R F'U2) R' F R F'", "link": "BV13EqgBrE95", "imagePath": "images/image_OLL_017.bmp", "difficulty": "hard", "tags": ["oll", "right", "front", "up"]},
+            {"number": 18, "step": "F (R U R' d)(R' U2) (R' F R F')", "link": "BV1QEqgB6EjL", "imagePath": "images/image_OLL_018.bmp", "difficulty": "hard", "tags": ["oll", "right", "front", "up"]},
+            {"number": 19, "step": "R' U2 F R U R'U' y'R2 U'U' R B", "link": "BV13EqgBrEXx", "imagePath": "images/image_OLL_019.bmp", "difficulty": "hard", "tags": ["oll", "rotation", "right", "front"]},
+            {"number": 20, "step": "r'(R U) (R U R'U' r2)(R2'U) (R U') r'", "link": "BV13EqgBrEBf", "imagePath": "images/image_OLL_020.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 21, "step": "(R U'U') (R' U' R U R' U') (R U' R')", "link": "BV13EqgBrE8k", "imagePath": "images/image_OLL_021.bmp", "difficulty": "medium", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 22, "step": "R U'U' (R'2 U') (R2 U') R'2 U' U'R", "link": "BV13EqgBrEQg", "imagePath": "images/image_OLL_022.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 23, "step": "(R2 D) (R' U2) (R D') (R' U2 R')", "link": "BV1eoqGBpEdU", "imagePath": "images/image_OLL_023.bmp", "difficulty": "hard", "tags": ["oll", "right", "up"]},
+            {"number": 24, "step": "x' R U R' (D R) U' R' D'", "link": "BV1voqGBpEPw", "imagePath": "images/image_OLL_024.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 25, "step": "F'(r U R' U') (r' F R)", "link": "BV1RoqGBpEWD", "imagePath": "images/image_OLL_025.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 26, "step": "R U'U' R' U' R U' R'", "link": "BV1voqGBpEVn", "imagePath": "images/image_OLL_026.bmp", "difficulty": "easy", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 27, "step": "R' U2 R U R' U R", "link": "BV1voqGBpEjH", "imagePath": "images/image_OLL_027.bmp", "difficulty": "easy", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 28, "step": "(r U R' U') (r' R U) (R U' R')", "link": "BV1voqGBpETT", "imagePath": "images/image_OLL_028.bmp", "difficulty": "medium", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 29, "step": "(R2 U' R) F (R' U) (R2 U') (R' F' R)", "link": "BV1voqGBpETS", "imagePath": "images/image_OLL_029.bmp", "difficulty": "hard", "tags": ["oll", "right", "front", "up"]},
+            {"number": 30, "step": "(R2 U R' B')(RU') (R2' U) (l U l')", "link": "BV1RoqGBpEXR", "imagePath": "images/image_OLL_030.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 31, "step": "(r' F' U F) (L F' L' U' r)", "link": "BV1eoqGBpEX8", "imagePath": "images/image_OLL_031.bmp", "difficulty": "hard", "tags": ["oll", "front", "right", "up"]},
+            {"number": 32, "step": "(R U)(B' U')(R' U R B R')", "link": "BV1acqVBSErd", "imagePath": "images/image_OLL_032.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 33, "step": "(R U R' U') (R' F R F')", "link": "BV1YcqVBSEEw", "imagePath": "images/image_OLL_033.bmp", "difficulty": "easy", "tags": ["oll", "right", "front", "up"]},
+            {"number": 34, "step": "(R'U'R U) x' z'(R U) (L'U')r R'", "link": "BV1acqVBSEde", "imagePath": "images/image_OLL_034.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 35, "step": "R U'U'R2' F R F'(R U'U'R')", "link": "BV1YcqVBSEHC", "imagePath": "images/image_OLL_035.bmp", "difficulty": "medium", "tags": ["oll", "right", "front", "up"]},
+            {"number": 36, "step": "R'U'R U' R'U R U l U'R'U", "link": "BV1GcqVBDEQq", "imagePath": "images/image_OLL_036.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 37, "step": "F (R U' R'U'R U) (R' F')", "link": "BV1acqVBSE16", "imagePath": "images/image_OLL_037.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 38, "step": "(R U R'U) (RU'R'U') (R'F R F')", "link": "BV1YcqVBSEwm", "imagePath": "images/image_OLL_038.bmp", "difficulty": "hard", "tags": ["oll", "right", "front", "up"]},
+            {"number": 39, "step": "(L F'L' U'L U) (F U' L')", "link": "BV1VcqVBDEEo", "imagePath": "images/image_OLL_039.bmp", "difficulty": "hard", "tags": ["oll", "front", "up", "counterclockwise"]},
+            {"number": 40, "step": "(R' F R U R'U') (F' U R)", "link": "BV1acqVBSEQf", "imagePath": "images/image_OLL_040.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 41, "step": "R U' R' U2 R U y R U' R' U' F'", "link": "BV1XcqVBSEnC", "imagePath": "images/image_OLL_041.bmp", "difficulty": "hard", "tags": ["oll", "rotation", "right", "front"]},
+            {"number": 42, "step": "(R'U RU'U' R' U')(F' U)(F U R)", "link": "BV1acqVBSEo6", "imagePath": "images/image_OLL_042.bmp", "difficulty": "hard", "tags": ["oll", "front", "right", "up"]},
+            {"number": 43, "step": "(B' U') (R' U R B)", "link": "BV1VFqVBHEr7", "imagePath": "images/image_OLL_043.bmp", "difficulty": "easy", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 44, "step": "f (R U R' U')f'", "link": "BV1VFqVBHEfz", "imagePath": "images/image_OLL_044.bmp", "difficulty": "easy", "tags": ["oll", "front", "right", "up"]},
+            {"number": 45, "step": "F (R U R' U') F'", "link": "BV1VFqVBHErq", "imagePath": "images/image_OLL_045.bmp", "difficulty": "easy", "tags": ["oll", "front", "right", "up"]},
+            {"number": 46, "step": "(R' U') R' F R F' (U R)", "link": "BV1YFqVBnEbN", "imagePath": "images/image_OLL_046.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 47, "step": "B'(R' U' R U)2 B", "link": "BV1XFqVBnEXZ", "imagePath": "images/image_OLL_047.bmp", "difficulty": "medium", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 48, "step": "F (R U R' U')2 F'", "link": "BV1eFqVBnEcM", "imagePath": "images/image_OLL_048.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 49, "step": "R B'(R2 F)(R2 B) R2 F' R", "link": "BV19FqVBnENW", "imagePath": "images/image_OLL_049.bmp", "difficulty": "hard", "tags": ["oll", "right", "front"]},
+            {"number": 50, "step": "L'B (L2 F')(L2B') L2 F L'", "link": "BV1YFqVBnEDx", "imagePath": "images/image_OLL_050.bmp", "difficulty": "hard", "tags": ["oll", "front", "counterclockwise"]},
+            {"number": 51, "step": "f (R U R' U')2 f'", "link": "BV1YFqVBnEtM", "imagePath": "images/image_OLL_051.bmp", "difficulty": "medium", "tags": ["oll", "front", "right", "up"]},
+            {"number": 52, "step": "R'U' R U' R' d R' U l U", "link": "BV19FqVBnEMr", "imagePath": "images/image_OLL_052.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 53, "step": "(r' U2) (R U R'U') (R U R'U) r", "link": "BV1YFqVBnEiN", "imagePath": "images/image_OLL_053.bmp", "difficulty": "medium", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 54, "step": "(r U'U') (R' U' R U R' U') (R U' r')", "link": "BV19FqVBnEPm", "imagePath": "images/image_OLL_054.bmp", "difficulty": "hard", "tags": ["oll", "right", "up", "counterclockwise"]},
+            {"number": 55, "step": "(R U'U') (R'2 U') R U' R'U2 (F R F')", "link": "BV1sjqVBzEib", "imagePath": "images/image_OLL_055.bmp", "difficulty": "hard", "tags": ["oll", "right", "front", "up"]},
+            {"number": 56, "step": "F (R U R'U')(R F')(r U R'U')r'", "link": "BV11jqVBzEtg", "imagePath": "images/image_OLL_056.bmp", "difficulty": "hard", "tags": ["oll", "front", "right", "up"]},
+            {"number": 57, "step": "(R U R' U' r)(R' U) (R U' r')", "link": "BV1sjqVBzE8J", "imagePath": "images/image_OLL_057.bmp", "difficulty": "medium", "tags": ["oll", "right", "up", "counterclockwise"]}
+        ],
+        "pll": [
+            {"number": 1, "step": "(R U' R)(U R U R)(U' R' U' R2)", "link": "BV11jqVBzEGQ", "imagePath": "images/image_PLL_001.bmp", "difficulty": "medium", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 2, "step": "(R2' U)(R U R' U')(R' U')(R' U R')", "link": "BV1sjqVBzEka", "imagePath": "images/image_PLL_002.bmp", "difficulty": "medium", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 3, "step": "L2(l'2 U)L2(l'2 U2)L2(l'2 U)L2 l2", "link": "BV1sjqVBzE2e", "imagePath": "images/image_PLL_003.bmp", "difficulty": "hard", "tags": ["pll", "up"]},
+            {"number": 4, "step": "(U R'U')(R U'R)(U R U')(R'U R U)(R2 U')(R'U)", "link": "", "imagePath": "images/image_PLL_004.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 5, "step": "x' R2 D2(R' U' R)D2(R' U R')", "link": "", "imagePath": "images/image_PLL_005.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 6, "step": "(l U' R)D2(R' U R)D2 R2", "link": "", "imagePath": "images/image_PLL_006.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 7, "step": "x'(R U' R' D)(R U R')u2'(R' U R)D(R' U' R)", "link": "", "imagePath": "images/image_PLL_007.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 8, "step": "(R U R' U')(R' F)(R2 U' R' U')(R U R' F')", "link": "", "imagePath": "images/image_PLL_008.bmp", "difficulty": "hard", "tags": ["pll", "right", "front", "up"]},
+            {"number": 9, "step": "U'(R'U R U' R'2 b')x(R'U R)y'(R U R' U' R2)", "link": "", "imagePath": "images/image_PLL_009.bmp", "difficulty": "hard", "tags": ["pll", "rotation", "right", "up"]},
+            {"number": 10, "step": "(R' U R' U') yx2 (R' U R' U'R2) xz'(R'U'R U R)", "link": "", "imagePath": "images/image_PLL_010.bmp", "difficulty": "hard", "tags": ["pll", "rotation", "right", "up"]},
+            {"number": 11, "step": "F(R U'R' U')(R U R' F')(R U R' U')(R' F R F')", "link": "", "imagePath": "images/image_PLL_011.bmp", "difficulty": "hard", "tags": ["pll", "front", "right", "up"]},
+            {"number": 12, "step": "z(U' R D')(R2 U R' U' R2 U)z'(R U')", "link": "", "imagePath": "images/image_PLL_012.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 13, "step": "(R U R'F')(R U R'U')(R'F R2 U'R'U')", "link": "", "imagePath": "images/image_PLL_013.bmp", "difficulty": "hard", "tags": ["pll", "front", "right", "up"]},
+            {"number": 14, "step": "(R' U2)(R U'U')(R' F R U R' U')(R'F' R2 U')", "link": "", "imagePath": "images/image_PLL_014.bmp", "difficulty": "hard", "tags": ["pll", "front", "right", "up"]},
+            {"number": 15, "step": "(R U'U')(R' U2)(R B' R' U')(R U R B R2' U)", "link": "", "imagePath": "images/image_PLL_015.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 16, "step": "(R2' u' R U' R)(U R' u)(R2 f R' f')", "link": "", "imagePath": "images/image_PLL_016.bmp", "difficulty": "hard", "tags": ["pll", "front", "right", "up"]},
+            {"number": 17, "step": "(R U R')y'(R2' u' R U')(R' U R' u R2)", "link": "", "imagePath": "images/image_PLL_017.bmp", "difficulty": "hard", "tags": ["pll", "rotation", "right", "up"]},
+            {"number": 18, "step": "(R2 u)(R' U R' U')(R u') (R2' F' U F)", "link": "", "imagePath": "images/image_PLL_018.bmp", "difficulty": "hard", "tags": ["pll", "front", "right", "up"]},
+            {"number": 19, "step": "(R' d' F)(R2 u)(R' U)(R U' R u' R2)", "link": "", "imagePath": "images/image_PLL_019.bmp", "difficulty": "hard", "tags": ["pll", "front", "right", "up"]},
+            {"number": 20, "step": "z(R' U R')z'(R U2 L' U R') z(U R')z'(R U2 L' U R')", "link": "", "imagePath": "images/image_PLL_020.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]},
+            {"number": 21, "step": "z(U'R D')(R2 U R'U')z'(R U R') z(R2 U R')z'(R U')", "link": "", "imagePath": "images/image_PLL_021.bmp", "difficulty": "hard", "tags": ["pll", "right", "up", "counterclockwise"]}
+        ]
+    };
+
+    class CubeAlgorithmApp {
+        constructor() {
+            this.algorithms = {
+                f2l: { links: [], steps: [], images: [] },
+                oll: { links: [], steps: [], images: [] },
+                pll: { links: [], steps: [], images: [] }
+            };
+            this.currentAlgorithm = null;
+            this.currentType = null;
+            this.init();
+        }
+
+        async init() {
+            try {
+                await this.processAlgorithmData(ALGORITHMS_DATA);
+                this.setupDropdown();
+            } catch (error) {
+                console.error('Failed to initialize app:', error);
+            }
+        }
+
+        async processAlgorithmData(data) {
+            for (const [type, algorithmsArray] of Object.entries(data)) {
+                const processedAlgorithms = [];
+                const steps = [];
+                const links = [];
+
+                for (const algorithm of algorithmsArray) {
+                    if (!algorithm.number || !algorithm.step) {
+                        continue;
+                    }
+
+                    processedAlgorithms.push({
+                        path: algorithm.imagePath,
+                        algorithmNumber: algorithm.number,
+                        index: processedAlgorithms.length,
+                        difficulty: algorithm.difficulty || 'medium',
+                        tags: algorithm.tags || []
+                    });
+
+                    steps[algorithm.number - 1] = algorithm.step;
+                    links[algorithm.number - 1] = algorithm.link || '';
+                }
+
+                this.algorithms[type] = {
+                    images: processedAlgorithms,
+                    steps: steps,
+                    links: links
+                };
+            }
+        }
+
+        setupDropdown() {
+            const algorithmTypeSelect = document.getElementById('algorithm-type-select');
+            algorithmTypeSelect.addEventListener('change', (e) => {
+                const selectedType = e.target.value;
+                this.handleAlgorithmTypeChange(selectedType);
+            });
+        }
+
+        handleAlgorithmTypeChange(algorithmType) {
+            const algorithmList = document.getElementById('algorithm-list');
+            algorithmList.innerHTML = '';
+            this.currentType = algorithmType;
+            this.currentAlgorithm = null;
+
+            if (!algorithmType) {
+                algorithmList.style.display = 'none';
+                this.clearMainContent();
+                return;
+            }
+
+            algorithmList.style.display = 'flex';
+
+            const algorithms = this.algorithms[algorithmType];
+            if (!algorithms || !algorithms.images) {
+                return;
+            }
+
+            const typeDisplayName = this.getTypeDisplayName(algorithmType);
+
+            algorithms.images.forEach((imageInfo, index) => {
+                const item = this.createAlgorithmItem(algorithmType, index, imageInfo, typeDisplayName);
+                algorithmList.appendChild(item);
+            });
+        }
+
+        createAlgorithmItem(type, index, imageInfo, displayName) {
+            const item = document.createElement('div');
+            item.className = 'algorithm-item';
+            item.dataset.type = type;
+            item.dataset.index = index;
+            item.dataset.algorithmNumber = imageInfo.algorithmNumber;
+
+            const thumbnail = document.createElement('img');
+            thumbnail.className = 'algorithm-thumbnail';
+            thumbnail.src = imageInfo.path;
+            thumbnail.alt = `${displayName} ${imageInfo.algorithmNumber}`;
+            thumbnail.onerror = () => {
+                thumbnail.style.display = 'none';
+            };
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'algorithm-info-item';
+
+            const name = document.createElement('div');
+            name.className = 'algorithm-name';
+            name.textContent = `${displayName} ${imageInfo.algorithmNumber}`;
+
+            const preview = document.createElement('div');
+            preview.className = 'algorithm-preview';
+            const stepIndex = imageInfo.algorithmNumber - 1;
+            const step = this.algorithms[type].steps[stepIndex];
+            if (step) {
+                preview.textContent = step.length > 25 ? step.substring(0, 25) + '...' : step;
+            } else {
+                preview.textContent = 'Click to view solution';
+            }
+
+            infoDiv.appendChild(name);
+            infoDiv.appendChild(preview);
+
+            item.appendChild(thumbnail);
+            item.appendChild(infoDiv);
+
+            item.addEventListener('click', () => this.selectAlgorithm(type, index, item));
+
+            return item;
+        }
+
+        selectAlgorithm(type, index, itemElement) {
+            const algorithms = this.algorithms[type];
+            const imageInfo = algorithms.images[index];
+            const algorithmNumber = imageInfo.algorithmNumber;
+
+            const stepIndex = algorithmNumber - 1;
+            const link = algorithms.links[stepIndex];
+            const step = algorithms.steps[stepIndex];
+
+            this.currentAlgorithm = { type, index, algorithmNumber, link, step, imageInfo };
+
+            document.querySelectorAll('.algorithm-item.active').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            if (itemElement) {
+                itemElement.classList.add('active');
+            }
+
+            this.displayAlgorithm(type, algorithmNumber, link, step);
+        }
+
+        clearMainContent() {
+            const titleElement = document.getElementById('algorithm-title');
+            const stepsElement = document.getElementById('algorithm-steps');
+            const videoArea = document.getElementById('video-area');
+
+            titleElement.textContent = '选择解法';
+            stepsElement.innerHTML = '<p>使用左侧下拉菜单选择解法类型，然后点击具体解法查看详细步骤</p>';
+            videoArea.innerHTML = `
+                <p>使用左侧下拉菜单选择解法查看教学视频</p>
+                <p>Use the dropdown menu on the left to select a solution and watch the tutorial video</p>
+            `;
+        }
+
+        displayAlgorithm(type, algorithmNumber, link, step) {
+            const titleElement = document.getElementById('algorithm-title');
+            const typeDisplayName = this.getTypeDisplayName(type);
+            titleElement.textContent = `${typeDisplayName} ${algorithmNumber}`;
+
+            const stepsElement = document.getElementById('algorithm-steps');
+            if (step) {
+                stepsElement.innerHTML = `
+                    <div class="steps-content">
+                        ${step}
+                    </div>
+                `;
+            } else {
+                stepsElement.innerHTML = '<p>Solution steps not available</p>';
+            }
+
+            this.displayVideo(link);
+        }
+
+        displayVideo(bvid) {
+            const videoArea = document.getElementById('video-area');
+
+            if (bvid && bvid.trim()) {
+                const iframe = document.createElement('iframe');
+                iframe.id = 'video-frame';
+                iframe.src = `https://player.bilibili.com/player.html?bvid=${bvid.trim()}`;
+                iframe.setAttribute('scrolling', 'no');
+                iframe.setAttribute('border', '0');
+                iframe.setAttribute('frameborder', 'no');
+                iframe.setAttribute('framespacing', '0');
+                iframe.setAttribute('allowfullscreen', 'true');
+
+                videoArea.innerHTML = '';
+                videoArea.appendChild(iframe);
+            } else {
+                videoArea.innerHTML = `
+                    <p>视频暂不可用</p>
+                    <p>Video not available</p>
+                `;
+            }
+        }
+
+        getTypeDisplayName(type) {
+            const displayNames = {
+                'f2l': 'F2L',
+                'oll': 'OLL',
+                'pll': 'PLL'
+            };
+            return displayNames[type] || type.toUpperCase();
+        }
+
+        navigateAlgorithm(direction) {
+            if (!this.currentAlgorithm || !this.currentType) return;
+
+            const algorithmItems = document.querySelectorAll('.algorithm-item');
+            const currentItem = document.querySelector('.algorithm-item.active');
+
+            if (!currentItem || algorithmItems.length === 0) return;
+
+            const currentIndex = Array.from(algorithmItems).indexOf(currentItem);
+            let newIndex = currentIndex;
+
+            if (direction === 'up') {
+                newIndex = Math.max(0, currentIndex - 1);
+            } else {
+                newIndex = Math.min(algorithmItems.length - 1, currentIndex + 1);
+            }
+
+            if (newIndex !== currentIndex) {
+                const newItem = algorithmItems[newIndex];
+                if (newItem) {
+                    const type = newItem.dataset.type;
+                    const index = parseInt(newItem.dataset.index);
+                    this.selectAlgorithm(type, index, newItem);
+                    newItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        }
+
+        getAlgorithm(type, index) {
+            if (this.algorithms[type] && this.algorithms[type].images[index]) {
+                const imageInfo = this.algorithms[type].images[index];
+                const algorithmNumber = imageInfo.algorithmNumber;
+                const stepIndex = algorithmNumber - 1;
+
+                return {
+                    type: type.toUpperCase(),
+                    number: algorithmNumber,
+                    step: this.algorithms[type].steps[stepIndex],
+                    link: this.algorithms[type].links[stepIndex],
+                    image: imageInfo.path
+                };
+            }
+            return null;
+        }
+
+        getAlgorithmCount(type) {
+            return this.algorithms[type] ? this.algorithms[type].images.length : 0;
+        }
+    }
+
+    // Initialize the app when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        window.cubeApp = new CubeAlgorithmApp();
+    });
+
+    // Add keyboard shortcuts for algorithm list navigation
+    document.addEventListener('keydown', (e) => {
+        if (!window.cubeApp || !window.cubeApp.currentAlgorithm) return;
+
+        switch(e.key) {
+            case 'ArrowUp':
+                e.preventDefault();
+                window.cubeApp.navigateAlgorithm('up');
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                window.cubeApp.navigateAlgorithm('down');
+                break;
+            default:
+                return;
+        }
+    });
+    </script>
+</body>
+</html>
