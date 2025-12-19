@@ -376,11 +376,12 @@
             if (bvid && bvid.trim()) {
                 const iframe = document.createElement('iframe');
                 iframe.id = 'video-frame';
-                iframe.src = `https://player.bilibili.com/player.html?bvid=${bvid.trim()}`;
+                iframe.src = `https://player.bilibili.com/player.html?bvid=${bvid.trim()}&autoplay=1&preload=auto&danmaku=0&as_wide=1&high_quality=1`;
                 iframe.setAttribute('scrolling', 'no');
                 iframe.setAttribute('border', '0');
                 iframe.setAttribute('frameborder', 'no');
                 iframe.setAttribute('framespacing', '0');
+                iframe.setAttribute('loading', 'lazy');
                 iframe.setAttribute('allowfullscreen', 'true');
 
                 videoArea.innerHTML = '';
